@@ -59,47 +59,58 @@ int main()
 {
     double x = -0.0179, y = 0.1403; // 터틀 초기좌표(lower_left)
     int i = 0;
+    bool fin = true;
     Navigation na = Navigation();
 
     while (1)
-    {
-        for (i = 0; i < 4; i++) //4번으로 쪼갬
-        {
-            if (x >= -1.2065 && y >= -1.2435) // 아래->위로 올라갈 때
+    {    
+            for (i = 0; i < 4; i++) //4번으로 쪼갬
             {
-                x = x - 0.2758;
-                y = y - 0.29715;
-                if (x == -1.2065 && y == -1.2435)
+                if (fin == true)
                 {
-                    na.navi2(x, y);
-                    y = y + 0.1;
-                    na.navi2(x, y);
-                    na.navi3(x, y);
-                    break; //for에 대한 break
+                    if (x >= -1.2065 && y >= -1.2435) // 아래->위로 올라갈 때
+                    {
+                        x = x - 0.2758;
+                        y = y - 0.29715;
+                        if (x == -1.2065 && y == -1.2435)
+                        {
+                            na.navi2(x, y);
+                            y = y + 0.1;
+                            na.navi2(x, y);
+                            na.navi3(x, y);
+                            fin = false;
+                            break; //for에 대한 break
+                        }
+                        na.navi(x, y);
+                        sleep(10);
+                    }
+                }                         
+                if (fin == false)
+                {            
+                    if (x <= -0.0179 && y <= 0.1403) // 위->아래로 내려갈 때
+                    {
+                        x = x + 0.2758;
+                        y = y + 0.29715;
+                        if (x == -0.0179 && y == 0.1403)
+                        {
+                            na.navi2(x, y);
+                            y = y + 0.1;
+                            na.navi2(x, y);
+                            na.navi(x, y);
+                            fin = true;
+                            break; //for에 대한 break
+                        }
+                        na.navi3(x, y);
+                        sleep(10);
+                    }
                 }
-                na.navi(x, y);
-                sleep(10);
             }
-            if (x <= -0.0179 && y <= 0.1403) // 위->아래로 내려갈 때
+            if (x == -3.6636 && y == 0.1594) // upper_right
             {
-                x = x + 0.2758;
-                y = y + 0.29715;
-                if (x == -0.0179 && y == 0.1403)
-                {
-                    na.navi2(x, y);
-                    y = y + 0.1;
-                    na.navi2(x, y);
-                    na.navi(x, y);
-                    break; //for에 대한 break
-                }
-                na.navi3(x, y);
-                sleep(10);
+                break;
             }
-        }
-        if (x == -3.6636 && y == 0.1594) // upper_right
-        {
-            break;
-        }
+            else
+                continue;           
     }
     sleep(60);
 }
