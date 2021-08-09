@@ -1,0 +1,155 @@
+#ifndef SERVICECLASSCECLASS_H
+#define SERVICECLASSCECLASS_H
+
+#include <iostream>
+#include <stdlib.h>
+#include <cstring>
+#include <vector>
+#include <stdio.h>
+#include <unistd.h>
+using namespace std;
+
+class Navigation
+{
+public:
+    Navigation();
+    virtual ~Navigation();
+
+public:
+    int x;
+    int y;
+
+public:
+    
+    void navi(double a, double b);
+    void navi2(double a, double b);
+    void navi3(double a, double b);
+};
+
+
+
+
+#endif // SERVICECLASSCECLASS_H
+
+
+Navigation::Navigation() {}
+Navigation::~Navigation()
+{
+
+}
+
+void Navigation::navi(double a, double b) // 1번->2번 방향
+{
+    char buf[200];
+    sprintf(buf, "rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '[0,[0,0],'map']' '[[%lf,%lf,0],[0,0,1,-0.5]]'", a, b);
+    system(buf);
+}
+
+void Navigation::navi2(double a, double b) // 2번->3번 방향
+{
+    char buf[200];
+    sprintf(buf, "rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '[0,[0,0],'map']' '[[%lf,%lf,0],[0,0,1,0.35]]'", a, b);
+    system(buf);
+}
+
+void Navigation::navi3(double a, double b) // 2번->4번 방향
+{
+    char buf[200];
+    sprintf(buf, "rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '[0,[0,0],'map']' '[[%lf,%lf,0],[0,0,1,2]]'", a, b);
+    system(buf);
+}
+
+
+class Point
+{
+
+public:
+    double a;
+    double b;
+    double x;
+    double y;
+
+    Point()
+    {
+
+    }
+
+    int geta()
+    {
+        return a;
+    }
+    int getb()
+    {
+        return b;
+    }
+    Point(double c, double d)
+    {
+        a = c;
+        b = d;
+    }
+
+    Point operator-(Point& p2)
+    {
+        Point p;
+        p.x = this->x + p2.x;
+        p.y = this->y + p2.y;
+        return p;
+    }
+};
+
+void go1(Navigation na, Point &pt1, Point& pt2)
+{
+    for (int i = 1; i < 5; i++)
+    {
+
+        na.navi(pt1.geta() + (i / 4) * pt2.geta(), pt1.getb() + (i / 4) * pt2.getb());
+
+    }
+
+
+}
+
+void go2(Navigation na, Point p)
+{
+    na.navi2(p.geta() + 0.1, p.getb() + 0.1);
+
+}
+
+/* void go3(Navigation na, Point& pt1, Point& pt2)
+{
+    for (int i = 1; i < 5; i++)
+    {
+        na.navi3(pt1.geta() + (i / 4) * pt2.geta(), pt1.getb() + (i / 4) * pt2.getb());
+
+    }
+
+}
+
+*/
+
+int main()
+{
+    double x = -0.0179, y = 0.1403; // 터틀 초기좌표(lower_left)
+    int i = 0;
+    bool fin = true;
+    Navigation na = Navigation(); 
+
+    Point p1(-0.0179, 0.1403), p2(-1.2065, -1.2435), p3(-3.6636, 0.1594), p4(-2.2672, 1.6711);
+    Point p5 = p1 - p3;
+
+    
+    go1(na, p1, p5);
+    go2(na, p2);
+
+
+
+
+
+
+
+
+
+
+}
+
+
