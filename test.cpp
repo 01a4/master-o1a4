@@ -74,7 +74,7 @@ int main()
                     na.navi2(x, y);
                     y = y + 0.1;
                     na.navi2(x, y);
-                    na.navi(x, y);
+                    na.navi3(x, y);
                     break; //for에 대한 break
                 }
                 na.navi(x, y);
@@ -89,7 +89,7 @@ int main()
                     na.navi2(x, y);
                     y = y + 0.1;
                     na.navi2(x, y);
-                    na.navi3(x, y);
+                    na.navi(x, y);
                     break; //for에 대한 break
                 }
                 na.navi3(x, y);
