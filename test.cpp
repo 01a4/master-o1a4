@@ -72,17 +72,19 @@ int main()
                     {
                         x = x - 0.2758;
                         y = y - 0.29715;
+                        na.navi(x, y);
+                        sleep(10);
+
                         if (x == -1.2065 && y == -1.2435)
                         {
                             na.navi2(x, y);
-                            y = y + 0.1;
-                            na.navi2(x, y);
+                            sleep(10);
+                            x = x + 0.1;
+                            y = y + 0.1;                           
                             na.navi3(x, y);
                             fin = false;
                             break; //for에 대한 break
-                        }
-                        na.navi(x, y);
-                        sleep(10);
+                        }                        
                     }
                 }                         
                 if (fin == false)
@@ -91,17 +93,18 @@ int main()
                     {
                         x = x + 0.2758;
                         y = y + 0.29715;
+                        na.navi3(x, y);
+                        sleep(10);
                         if (x == -0.0179 && y == 0.1403)
                         {
                             na.navi2(x, y);
-                            y = y + 0.1;
-                            na.navi2(x, y);
+                            sleep(10);
+                            x = x + 0.1;
+                            y = y + 0.1;                            
                             na.navi(x, y);
                             fin = true;
                             break; //for에 대한 break
-                        }
-                        na.navi3(x, y);
-                        sleep(10);
+                        }                   
                     }
                 }
             }
@@ -114,6 +117,8 @@ int main()
     }
     sleep(60);
 }
+
+
 
 
 
