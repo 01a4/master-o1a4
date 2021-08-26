@@ -1,0 +1,135 @@
+#include <stdio.h>
+
+double x = -0.0179;
+double y = 0.1403;
+int z = 0;
+bool up = true;
+
+void go11()
+{
+	x = x - 0.3491;
+	y = y -0.34;
+	z = 0;
+	printf("x좌표 : %f, y좌표 : %f, orgin : %d\n", x, y, z);
+	
+}
+
+void go12()
+{
+	x = x - 0.3748;
+	y = y + 0.25;
+	z = 0;
+	up = true;
+	printf("x좌표 : %f, y좌표 : %f, orgin : %d\n", x, y, z);
+}
+
+void go21()
+{
+	x = x - 0.3491;
+	y = y - 0.34;
+	z = 1;
+	printf("x좌표 : %f, y좌표 : %f, orgin : %d\n", x, y, z);
+}
+
+void go22()
+{
+	x = x + 0.3491;
+	y = y + 0.34;
+	z = 1;
+	printf("x좌표 : %f, y좌표 : %f, orgin : %d\n", x, y, z);
+}
+
+void go31()
+{
+	x = x + 0.3491;
+	y = y + 0.34;
+	z = 2;
+	printf("x좌표 : %f, y좌표 : %f, orgin : %d\n", x, y, z);
+}
+
+void go32()
+{
+	x = x - 0.3748;
+	y = y + 0.25;
+	z = 2;
+	up = false;
+	printf("x좌표 : %f, y좌표 : %f, orgin : %d\n", x, y, z);
+}
+
+void for1()
+{
+	for (int i = 0; i < 3; i++) {
+		go11();
+
+
+	}
+	go21();
+	go32();
+
+
+}
+
+void for2()
+{
+	for (int i = 0; i < 3; i++) {
+		go31();
+
+
+	}
+	go22();
+	go12();
+
+
+}
+
+
+int main(void)
+{
+
+
+	//lower_left
+	double a = -0.0179;
+	double b = 0.1403;
+
+	// upper_left
+	double c = -1.2065;
+	double d = -1.2435;
+
+	//upper_right
+	double e = -3.6636;
+	double f = 0.1594;
+
+
+	//lower_right
+	double g = -2.2672;
+	double h = 1.6711;
+
+	for (int i = 0; i < 6; i++) {
+		if (up == true) 
+		{
+			for1();
+
+		}
+		else
+		{
+			for2();
+
+		}
+
+
+
+
+	}
+	
+	for (int i = 0; i < 4; i++) {
+		go11();
+
+
+	}
+
+
+
+
+
+
+}
