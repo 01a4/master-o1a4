@@ -11,8 +11,10 @@ public:
 	void cbCheckArrivalStatus_0(const move_base_msgs::MoveBaseActionResult rcvMoveBaseActionResult){
 	if (rcvMoveBaseActionResult.status.status == 3)
     {
-      state[0] = true;
-      ROS_INFO("change state[0]");
+      state = false;
+      ROS_INFO("arrive");
+      if(i==0){i++;}
+      else{i--;}
     }
     else
     {
@@ -21,7 +23,7 @@ public:
   }
 
 
-	void cbCheckArrivalStatus_1(const move_base_msgs::MoveBaseActionResult rcvMoveBaseActionResult){
+/*	void cbCheckArrivalStatus_1(const move_base_msgs::MoveBaseActionResult rcvMoveBaseActionResult){
         if (rcvMoveBaseActionResult.status.status == 3)
     {
       state[1] = true;
@@ -32,10 +34,10 @@ public:
       ROS_INFO("cbCheckArrivalStatus_1 : %d", rcvMoveBaseActionResult.status.status);
     }
   }
-
+*/
 
 void fnPubPose()
-{
+{/*
 if(state[0])
 {
 pubPoseStampedTb3p.publish(poseStampedTable[0]);
@@ -48,6 +50,15 @@ pubPoseStampedTb3p.publish(poseStampedTable[1]);
 ROS_INFO("state[1] publish");
 state[1] = false;
 
+}*/
+
+if(state){
+pubPoseStampedTb3p.publish(poseStampedTable[i]);
+ROS_INFO("%dpose publish",i);
+}
+else{
+	state = true;
+	ROS_INFO("STATE CHANGE");
 }
 }
 
@@ -146,7 +157,7 @@ pubPoseStampedTb3p = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simpl
 
 
 sub_arrival_status_0 = nh_.subscribe("/move_base/result", 1, &Myservice::cbCheckArrivalStatus_0, this);
-sub_arrival_status_1 = nh_.subscribe("/move_base/result", 1, &Myservice::cbCheckArrivalStatus_1, this);
+//sub_arrival_status_1 = nh_.subscribe("/move_base/result", 1, &Myservice::cbCheckArrivalStatus_1, this);
 ros::Rate loop_rate(5);
 
 
@@ -156,7 +167,7 @@ while (ros::ok())
 
 fnPubPose();
 
-
+sleep(1);
 
 ros::spinOnce();
 loop_rate.sleep();
@@ -168,7 +179,7 @@ private:
 
         {-1.6285, -0.4183,},
 
-        {-2.1424, 1.1759}
+        {-0.8057, 0.3931}
 };
 
 geometry_msgs::PoseStamped poseStampedTable[2];
@@ -176,7 +187,7 @@ geometry_msgs::PoseStamped poseStampedTable[2];
 ros::Subscriber sub_arrival_status_0;
 ros::Subscriber sub_arrival_status_1;
 ros::Publisher pubPoseStampedTb3p;
-
+int i=0;
 /*poseStampedTable[0].header.seq = 0;
 poseStampedTable[0].header.stamp.sec = 0;
 poseStampedTable[0].header.stamp.nsec = 0;
@@ -205,7 +216,7 @@ poseStampedTable[1].pose.orientation.z = 1;
 poseStampedTable[1].pose.orientation.w = -0.5;
 
 */
-bool state[2] = {true, true};
+bool state = true;
 };
 
 int main(int argc, char **argv)
