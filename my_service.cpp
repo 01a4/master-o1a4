@@ -186,7 +186,7 @@ private:
 double x = -0.0179;
 double y = 0.1403;
 	
-int count = 0;
+int count = 0;  //아래로 가고 오른쪽을 보는횟수임. 긴 변을 나눈 횟수에 따라 값이 달라짐 현재는 6으로 나누었기 때문에 최대값이 3임.
 double ow = -0.5;
 	
 int z = 0;
