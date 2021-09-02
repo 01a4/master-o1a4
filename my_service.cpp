@@ -24,17 +24,17 @@ public:
 
 void check_ranges(const sensor_msgs::LaserScan msg){
 	i++;
-	
+	check = 0;
 	for(int k=0;k<=360;k++){
        		if ((msg.ranges[k]<0.25)&&(msg.ranges[k]>0.1)) {
+		check++;
 		ROS_INFO("%d loop, value = %f",i,msg.ranges[k]);
       		ROS_INFO("wall close");
 		state = false;
        		vel.linear.x = 0;}}
 
 
-	if (state == false){vel.angular.z = 0.3;}
-	else{vel.linear.x = 0.3;}
+	if(check == 0) {state = true;}
 
 
 	}	       
@@ -192,9 +192,9 @@ ros::Rate loop_rate(5);
 while (ros::ok())
 {
 
-if(state){move.publish(vel);}
-else{
-
+if(state){vel.angular.z = 0; vel.linear.x = 0.03;}
+else{vel.angular.z = 0.3; vel.linear.x = 0;}
+move.publish(vel);
 
 //fnPubPose();
 
@@ -210,6 +210,7 @@ double x = -0.0179;
 double y = 0.1403;
 	
 int count = 0;
+int check = 0;
 double ow = -0.5;
 	
 int z = 0;
