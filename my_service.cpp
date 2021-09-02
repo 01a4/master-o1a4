@@ -2,11 +2,11 @@
 #include <sstream>
 #include <std_msgs/String.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Twist.h>
 #include <move_base_msgs/MoveBaseActionResult.h>
-
-
+#include <sensor_msgs/LaserScan.h>
 class Myservice
-{
+{ 
 public:
 	void cbCheckArrivalStatus_0(const move_base_msgs::MoveBaseActionResult rcvMoveBaseActionResult){
 	if (rcvMoveBaseActionResult.status.status == 3)
@@ -22,7 +22,25 @@ public:
     }
   }
 
+void check_ranges(const sensor_msgs::LaserScan msg){
+	i++;
+	move.publish(vel);
+	for(int k=0;k<=360;k++){
+       if ((msg.ranges[k]<0.25)&&(msg.ranges[k]>0.1)) {
+	
+	ROS_INFO("%d loop, value = %f",i,msg.ranges[k]);
+       ROS_INFO("wall close");
+       vel.angular.z = 0.3;
+       //move.publish(vel);
+       
+       }/*
+       else if(msgs.ranges[k])
+       vel.linear.x=0.01;
+       move.publish(vel);
+       */}
+	}	       
 
+	
 
 void go11()
 {
@@ -135,7 +153,9 @@ poseStampedTable.pose.orientation.x = 0;
 poseStampedTable.pose.orientation.y = 0;
 poseStampedTable.pose.orientation.z = 1;
 poseStampedTable.pose.orientation.w = ow;
-	
+
+
+
 /*
 poseStampedTable[1].header.seq = 0;
 poseStampedTable[1].header.stamp.sec = 0;
@@ -161,46 +181,53 @@ poseStampedTable[1].pose.orientation.w = -0.5;*/
 ros::NodeHandle nh_;
 
 pubPoseStampedTb3p = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
-
+move = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 
 sub_arrival_status_0 = nh_.subscribe("/move_base/result", 1, &Myservice::cbCheckArrivalStatus_0, this);
+
+range_status = nh_.subscribe("/scan", 1, &Myservice::check_ranges,this);
+
 ros::Rate loop_rate(5);
 
 
 while (ros::ok())
 {
 
+//vel.linear.x=0.03;
+//move.publish(vel);
+//fnPubPose();
 
-fnPubPose();
-
-sleep(1);
 
 ros::spinOnce();
 loop_rate.sleep();
 }
 	}
 	
-private:
-	
+private:	
 
 double x = -0.0179;
 double y = 0.1403;
 	
-int count = 0;  //아래로 가고 오른쪽을 보는횟수임. 긴 변을 나눈 횟수에 따라 값이 달라짐 현재는 6으로 나누었기 때문에 최대값이 3임.
-double ow = -0.5; //바라보는 방향
+int count = 0;
+double ow = -0.5;
 	
-int z = 0; // bool변수 up이 true일때 로봇이 움직일때마다 값이 1씩 증가하고 
-	   // bool변수 up이 false일때 로봇이 움직일때마다 값이 1씩 감소함
-	// 위,아래로 움직일건지, 방향을 바꿀차례인지 확인하는 변수
-	
+int z = 0;
 bool up = true;	
 	
 	
 geometry_msgs::PoseStamped poseStampedTable;
+geometry_msgs::Twist vel;
 
+
+//sensor_msgs::LaserScan lds;
+ros::Subscriber range_status;
 ros::Subscriber sub_arrival_status_0;
 ros::Subscriber sub_arrival_status_1;
+
 ros::Publisher pubPoseStampedTb3p;
+ros::Publisher move;
+ros::Publisher lds;
+
 int i=1;
 
 bool state = true;
