@@ -8,6 +8,7 @@
 class Myservice
 { 
 public:
+
 	void cbCheckArrivalStatus_0(const move_base_msgs::MoveBaseActionResult rcvMoveBaseActionResult){
 	if (rcvMoveBaseActionResult.status.status == 3)
     {
@@ -22,16 +23,31 @@ public:
     }
   }
 
+void turn(){ROS_INFO("turning");vel.linear.x = 0;vel.angular.z = 0.3;
+	move.publish(vel);
+	ros::spinOnce();
+//loop_rate.sleep();
+
+}
+
+void go_straight(){ROS_INFO("go straight");vel.angular.z = 0;vel.linear.x = 0.05;
+	move.publish(vel);
+	ros::spinOnce();
+//loop_rate.sleep();
+
+}
+
+
+
 void check_ranges(const sensor_msgs::LaserScan msg){
 	i++;
 	check = 0;
 	for(int k=0;k<=360;k++){
-       		if ((msg.ranges[k]<0.25)&&(msg.ranges[k]>0.1)) {
+       		if ((msg.ranges[k]<0.36)&&(msg.ranges[k]>0.1)) {
 		check++;
 		ROS_INFO("%d loop, value = %f",i,msg.ranges[k]);
       		ROS_INFO("wall close");
-		state = false;
-       		vel.linear.x = 0;}}
+		state = false;}}
 
 
 	if(check == 0) {state = true;}
@@ -192,9 +208,28 @@ ros::Rate loop_rate(5);
 while (ros::ok())
 {
 
-if(state){vel.angular.z = 0; vel.linear.x = 0.03;}
-else{vel.angular.z = 0.3; vel.linear.x = 0;}
-move.publish(vel);
+if(!state){
+	ros::Time t1 = ros::Time::now();
+	while(1){
+        	if(ros::Time::now() - t1 < ros::Duration(5.0)){
+			turn();}
+			//move.publish(vel);}
+		else{break;}
+		}
+	ros::Time t2 = ros::Time::now();
+	while(1){
+		if(ros::Time::now() - t2 < ros::Duration(3.0)){
+                        go_straight();}
+                        //move.publish(vel);}
+                else{break;}
+
+	}}
+
+else{go_straight(); }
+//move.publish(vel);
+
+
+
 
 //fnPubPose();
 
