@@ -23,11 +23,15 @@ public:
     }
   }
 
-void turn(){ROS_INFO("turning");vel.linear.x = 0;vel.angular.z = 0.3;
+void left_turn(){ROS_INFO("turning");vel.linear.x = 0;vel.angular.z = 0.3;
+
+}
+void right_turn(){ROS_INFO("turning");vel.linear.x = 0;vel.angular.z = -0.3;
 
 }
 
-void go_straight(){ROS_INFO("go straight");vel.angular.z = 0;vel.linear.x = 0.05;
+
+void go_straight(){ROS_INFO("go straight");vel.angular.z = 0;vel.linear.x = 0.15;
 
 
 }
@@ -222,7 +226,8 @@ while (ros::ok())
 
 
 if(left_state && right_state){go_straight();}
-else{turn();}
+else if( !right_state){right_turn();}
+else if( !left_state){left_turn();}
 move.publish(vel);
 
 
