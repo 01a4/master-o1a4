@@ -24,36 +24,47 @@ public:
   }
 
 void turn(){ROS_INFO("turning");vel.linear.x = 0;vel.angular.z = 0.3;
-	move.publish(vel);
-	ros::spinOnce();
-//loop_rate.sleep();
 
 }
 
 void go_straight(){ROS_INFO("go straight");vel.angular.z = 0;vel.linear.x = 0.05;
-	move.publish(vel);
-	ros::spinOnce();
-//loop_rate.sleep();
+
 
 }
 
 
 
-void check_ranges(const sensor_msgs::LaserScan msg){
+void left_check_ranges(const sensor_msgs::LaserScan msg){
 	i++;
-	check = 0;
-	for(int k=0;k<=360;k++){
+	left_check = 0;
+	for(int k=300;k<360;k++){
        		if ((msg.ranges[k]<0.36)&&(msg.ranges[k]>0.1)) {
-		check++;
-		ROS_INFO("%d loop, value = %f",i,msg.ranges[k]);
-      		ROS_INFO("wall close");
-		state = false;}}
+		left_check++;
+		ROS_INFO("%d left_loop, value = %f",i,msg.ranges[k]);
+      		ROS_INFO("left_wall close");
+		left_state = false;}}
 
 
-	if(check == 0) {state = true;}
+	if(left_check == 0) {left_state = true;}
 
 
-	}	       
+	}
+void right_check_ranges(const sensor_msgs::LaserScan msg){
+        i++;
+        right_check = 0;
+        for(int k=0;k<60;k++){
+                if ((msg.ranges[k]<0.36)&&(msg.ranges[k]>0.1)) {
+                right_check++;
+                ROS_INFO("%d right_loop, value = %f",i,msg.ranges[k]);
+                ROS_INFO("right_wall close");
+                right_state = false;}}
+
+
+        if(right_check == 0) {right_state = true;}
+
+
+        }
+
 
 	
 
@@ -120,7 +131,7 @@ void go32()
 }
 
 
-void fnPubPose()
+/*void fnPubPose()
 {
 
 if(state){
@@ -150,7 +161,7 @@ else{
 	state = true;
 	ROS_INFO("STATE CHANGE");
 }
-}
+}*/
 
 
 void fnInitParam()
@@ -200,7 +211,8 @@ move = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 
 sub_arrival_status_0 = nh_.subscribe("/move_base/result", 1, &Myservice::cbCheckArrivalStatus_0, this);
 
-range_status = nh_.subscribe("/scan", 1, &Myservice::check_ranges,this);
+left_range_status = nh_.subscribe("/scan", 1, &Myservice::left_check_ranges,this);
+right_range_status = nh_.subscribe("/scan", 1, &Myservice::right_check_ranges,this);
 
 ros::Rate loop_rate(5);
 
@@ -208,25 +220,10 @@ ros::Rate loop_rate(5);
 while (ros::ok())
 {
 
-if(!state){
-	ros::Time t1 = ros::Time::now();
-	while(1){
-        	if(ros::Time::now() - t1 < ros::Duration(5.0)){
-			turn();}
-			//move.publish(vel);}
-		else{break;}
-		}
-	ros::Time t2 = ros::Time::now();
-	while(1){
-		if(ros::Time::now() - t2 < ros::Duration(3.0)){
-                        go_straight();}
-                        //move.publish(vel);}
-                else{break;}
 
-	}}
-
-else{go_straight(); }
-//move.publish(vel);
+if(left_state && right_state){go_straight();}
+else{turn();}
+move.publish(vel);
 
 
 
@@ -245,7 +242,8 @@ double x = -0.0179;
 double y = 0.1403;
 	
 int count = 0;
-int check = 0;
+int left_check = 0;
+int right_check = 0;
 double ow = -0.5;
 	
 int z = 0;
@@ -257,7 +255,10 @@ geometry_msgs::Twist vel;
 
 
 //sensor_msgs::LaserScan lds;
-ros::Subscriber range_status;
+ros::Subscriber left_range_status;
+ros::Subscriber right_range_status;
+
+
 ros::Subscriber sub_arrival_status_0;
 ros::Subscriber sub_arrival_status_1;
 
@@ -266,8 +267,9 @@ ros::Publisher move;
 ros::Publisher lds;
 
 int i=1;
-
 bool state = true;
+bool left_state = true;
+bool right_state = true;
 };
 
 int main(int argc, char **argv)
