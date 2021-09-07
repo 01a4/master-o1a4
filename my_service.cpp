@@ -5,6 +5,8 @@
 #include <geometry_msgs/Twist.h>
 #include <move_base_msgs/MoveBaseActionResult.h>
 #include <sensor_msgs/LaserScan.h>
+#include <cstdlib>
+#include <ctime>
 class Myservice
 { 
 public:
@@ -38,6 +40,25 @@ void go_straight(){ROS_INFO("go straight");vel.angular.z = 0;vel.linear.x = 0.15
 
 
 
+
+void right_check_ranges(const sensor_msgs::LaserScan msg){
+        i++;
+        right_check = 0;
+        srand(time(NULL));
+        int d = rand() % 60;
+        for(int k=0;k<d;k++){
+                if ((msg.ranges[k]<0.36)&&(msg.ranges[k]>0.1)) {
+                right_check++;
+                ROS_INFO("%d right_loop, value = %f",i,msg.ranges[k]);
+                ROS_INFO("right_wall close");
+                right_state = false;}}
+
+
+        if(right_check == 0) {right_state = true;}
+
+
+        }
+
 void left_check_ranges(const sensor_msgs::LaserScan msg){
 	i++;
 	left_check = 0;
@@ -53,10 +74,12 @@ void left_check_ranges(const sensor_msgs::LaserScan msg){
 
 
 	}
-void right_check_ranges(const sensor_msgs::LaserScan msg){
+/*void right_check_ranges(const sensor_msgs::LaserScan msg){
         i++;
         right_check = 0;
-        for(int k=0;k<60;k++){
+	srand(time(NULL));
+	int d = rand() % 60;
+        for(int k=0;k<d;k++){
                 if ((msg.ranges[k]<0.36)&&(msg.ranges[k]>0.1)) {
                 right_check++;
                 ROS_INFO("%d right_loop, value = %f",i,msg.ranges[k]);
@@ -69,7 +92,7 @@ void right_check_ranges(const sensor_msgs::LaserScan msg){
 
         }
 
-
+*/
 	
 
 void go11()
@@ -215,8 +238,9 @@ move = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 
 sub_arrival_status_0 = nh_.subscribe("/move_base/result", 1, &Myservice::cbCheckArrivalStatus_0, this);
 
-left_range_status = nh_.subscribe("/scan", 1, &Myservice::left_check_ranges,this);
 right_range_status = nh_.subscribe("/scan", 1, &Myservice::right_check_ranges,this);
+left_range_status = nh_.subscribe("/scan", 1, &Myservice::left_check_ranges,this);
+//right_range_status = nh_.subscribe("/scan", 1, &Myservice::right_check_ranges,this);
 
 ros::Rate loop_rate(5);
 
@@ -226,8 +250,9 @@ while (ros::ok())
 
 
 if(left_state && right_state){go_straight();}
-else if( !right_state){right_turn();}
-else if( !left_state){left_turn();}
+else{left_turn();}
+//else if( !right_state){left_turn();}
+//else {right_turn();}
 move.publish(vel);
 
 
